@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     package="com.gregoryzuroff.coffeebuzz">
 
     <application
@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".HomePage" />
+        <activity android:name=".LoginSignUp" />
+        <activity android:name=".CoffeeShopActivity" />
+        <activity android:name=".WriteReview" />
+        <activity android:name=".ProfilePage" />
+        <activity android:name=".Recommended"></activity>
     </application>
 
 </manifest>
