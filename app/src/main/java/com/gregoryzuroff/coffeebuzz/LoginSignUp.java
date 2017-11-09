@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,13 +15,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import static android.R.attr.button;
 import static android.content.ContentValues.TAG;
 
-public class LoginSignUp extends Activity {
+public class LoginSignUp extends Activity  implements Button.OnClickListener {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private Button buttonLogIn, buttonCreate;
-    private TextView textViewUsername, textviewPassword;
+    private TextView editTextUsername, editTextPassword;
 
 
     @Override
@@ -57,7 +59,7 @@ public class LoginSignUp extends Activity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
     }}
-    protected void createAccount() {
+    public void createAccount(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -68,17 +70,15 @@ public class LoginSignUp extends Activity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(EmailPasswordActivity.this, R.string.auth_failed,
+                            Toast.makeText(LoginSignUp.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
-
     }
 
-    protected void signIn() {
+
+    public void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -90,14 +90,18 @@ public class LoginSignUp extends Activity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(EmailPasswordActivity.this, R.string.auth_failed,
+                            Toast.makeText(LoginSignUp.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
-                }
-
+                });
     }
+
+    @Override
+    public void onClick(View view) {
+        createAccount(editTextUsername.getText().toString(), editTextPassword.getText().toString());
+    }
+
+
 
 }
