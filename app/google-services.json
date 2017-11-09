@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "983854563021",
+    "firebase_url": "https://coffeebuzz-2b15e.firebaseio.com",
+    "project_id": "coffeebuzz-2b15e",
+    "storage_bucket": "coffeebuzz-2b15e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983854563021:android:414dc46f718679c3",
+        "android_client_info": {
+          "package_name": "com.gregoryzuroff.coffeebuzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "983854563021-b74i6gcrus6bbfjfsnrjfklh821kq75o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMNRDtqTljtVOikbCezySNyng1zZ_6Up0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
