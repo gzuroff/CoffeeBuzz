@@ -10,7 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".HomePage" />
-        <activity android:name=".LoginSignUp" />
+        <activity android:name=".LoginSignup">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".CoffeeShopActivity" />
         <activity android:name=".WriteReview" />
         <activity android:name=".ProfilePage" />

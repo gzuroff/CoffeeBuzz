@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,14 +16,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static android.R.attr.button;
 import static android.content.ContentValues.TAG;
 
-public class LoginSignUp extends Activity  implements Button.OnClickListener {
+public class LoginSignup extends Activity  implements Button.OnClickListener {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private Button buttonLogIn, buttonCreate;
-    private TextView editTextUsername, editTextPassword;
+    private EditText editTextUsername, editTextPassword;
 
 
     @Override
@@ -45,6 +45,12 @@ public class LoginSignUp extends Activity  implements Button.OnClickListener {
                 // ...
             }
         };
+        buttonLogIn = (Button) findViewById(R.id.buttonLogIn);
+        buttonCreate = (Button) findViewById(R.id.buttonCreate);
+        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
+        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+        buttonLogIn.setOnClickListener(this);
+        buttonCreate.setOnClickListener(this);
     }
 
     @Override
@@ -70,7 +76,7 @@ public class LoginSignUp extends Activity  implements Button.OnClickListener {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginSignUp.this, "Authentication Failed",
+                            Toast.makeText(LoginSignup.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -90,7 +96,7 @@ public class LoginSignUp extends Activity  implements Button.OnClickListener {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginSignUp.this, "Authentication Failed",
+                            Toast.makeText(LoginSignup.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -99,7 +105,12 @@ public class LoginSignUp extends Activity  implements Button.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        createAccount(editTextUsername.getText().toString(), editTextPassword.getText().toString());
+        if (view == buttonCreate) {
+            createAccount(editTextUsername.getText().toString(), editTextPassword.getText().toString());
+        }
+        else if (view == buttonLogIn){
+            signIn(editTextUsername.getText().toString(), editTextPassword.getText().toString());
+        }
     }
 
 
