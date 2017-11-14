@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">Coffee Buzz</string>
+
+    <!--> HomePage</!-->
     <string name="locationInput">Location</string>
     <string name="filterButtonString">Filter</string>
     <string name="sortButtonString">Sort By</string>
     <string name="signUpButtonString">Sign Up</string>
+
+    <!--> LoginSignup </!-->
+    <string name="emailInput">E-Mail Address</string>
+    <string name="passwordInput">Password</string>
+    <string name="createAccountButton">Create Account</string>
+    <string name="loginButton">Login</string>
 </resources>
