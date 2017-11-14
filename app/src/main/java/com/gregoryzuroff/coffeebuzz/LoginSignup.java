@@ -1,13 +1,13 @@
 package com.gregoryzuroff.coffeebuzz;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -98,6 +98,10 @@ public class LoginSignup extends Activity  implements Button.OnClickListener {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(LoginSignup.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Intent home = new Intent(LoginSignup.this, HomePage.class);
+                            LoginSignup.this.startActivity(home);
                         }
                     }
                 });
