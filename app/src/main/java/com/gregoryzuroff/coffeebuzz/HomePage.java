@@ -36,17 +36,18 @@ public class HomePage extends Activity {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get all shops data as one long string
+                listAdapter = new ArrayAdapter<String>(HomePage.this, R.layout.simplerow);
+                // Get all shops data in shops
                 ArrayList<CoffeeShop> shops = new ArrayList<CoffeeShop>();
-                ArrayList<String> names = new ArrayList<String>();
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    //store shops
                     shops.add(postSnapshot.getValue(CoffeeShop.class));
-                    names.add(postSnapshot.getValue(CoffeeShop.class).name);
+                    //Add shop names to listAdapter
+                    listAdapter.add(postSnapshot.getValue(CoffeeShop.class).name);
                 }
+                //Add shop names to coffeList ListView
                 coffeeList = (ListView) findViewById(R.id.coffeeList);
-
-                listAdapter = new ArrayAdapter<String>(HomePage.this, R.layout.simplerow, names);
-                coffeeList.setAdapter( listAdapter );
+                coffeeList.setAdapter(listAdapter);
             }
 
             @Override
