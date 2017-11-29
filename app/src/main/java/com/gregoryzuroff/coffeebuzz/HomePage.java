@@ -25,25 +25,33 @@ import static android.content.ContentValues.TAG;
 public class HomePage extends Activity {
     private ListView coffeeList;
     private ArrayAdapter<String> listAdapter;
-
+    // Get all shops data in shops
+    public ArrayList<CoffeeShop> shops;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        //initialize shops and listAdapter as empty
+        shops = new ArrayList<CoffeeShop>();
+        listAdapter = new ArrayAdapter<String>(HomePage.this, R.layout.simplerow);
+
+        //Connect to Database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Shops");
-// Read from the database
+
+
+        // Read from the database
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                listAdapter = new ArrayAdapter<String>(HomePage.this, R.layout.simplerow);
-                // Get all shops data in shops
-                ArrayList<CoffeeShop> shops = new ArrayList<CoffeeShop>();
+                //Loops through all shops
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     //store shops
-                    shops.add(postSnapshot.getValue(CoffeeShop.class));
+                    CoffeeShop temp = postSnapshot.getValue(CoffeeShop.class);
+                    shops.add(temp);
                     //Add shop names to listAdapter
-                    listAdapter.add(postSnapshot.getValue(CoffeeShop.class).name);
+                    listAdapter.add(temp.name);
                 }
                 //Add shop names to coffeList ListView
                 coffeeList = (ListView) findViewById(R.id.coffeeList);
@@ -56,9 +64,13 @@ public class HomePage extends Activity {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                 // ...
             }
+
         };
         myRef.addValueEventListener(postListener);
-
+        Toast.makeText(this, Integer.toString(shops.size()), Toast.LENGTH_SHORT).show();
+        for(CoffeeShop x : shops){
+            Toast.makeText(this, x.name, Toast.LENGTH_SHORT).show();
+        }
     }
 
 
