@@ -8,8 +8,31 @@ import java.util.Hashtable;
  */
 
 public class Drink {
-    String classifcation, name;
-    int strenght, avgRating;
+    public void setClassification(String classification) {
+        this.classification = classification;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public void setAvgRating(int avgRating) {
+        this.avgRating = avgRating;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+
+    String classification, name;
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    int strength, avgRating;
     double price;
-    Hashtable<String, ArrayList<DrinkReview>> Reviews;
+    //Hashtable<String, ArrayList<DrinkReview>> Reviews;
 }

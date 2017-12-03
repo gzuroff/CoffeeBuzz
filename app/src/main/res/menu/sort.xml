@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nameSort"
+        android:title="Name A-Z"
+        />
+    <item android:id="@+id/ratingSort"
+        android:title="Rating High-Low"
+        />
+</menu>

@@ -2,7 +2,9 @@ package com.gregoryzuroff.coffeebuzz;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Created by gregoryzuroff on 11/2/17.
@@ -67,7 +69,12 @@ public class CoffeeShop {
         this.atmosphere = atmosphere;
     }
 
-    //ArrayList<Drink> menu;
+
+    public void setMenu(Map<String, Drink> menu) {
+        this.menu = menu;
+    }
+
+    Map<String, Drink> menu;
     //Hashtable<String, ArrayList<CoffeeShopReview>> reviews;
 
 
