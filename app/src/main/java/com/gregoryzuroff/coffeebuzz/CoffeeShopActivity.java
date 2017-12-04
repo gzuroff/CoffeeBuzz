@@ -1,13 +1,172 @@
 package com.gregoryzuroff.coffeebuzz;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class CoffeeShopActivity extends Activity {
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
+
+public class CoffeeShopActivity extends Activity implements Button.OnClickListener {
+
+    private String chosenShopName;
+    private CoffeeShop shop;
+    private TextView textViewName, textViewNoise, textViewVariety, textViewStudying, textViewLight,
+    textViewAccess, textViewAtmosphere, textViewRating;
+    private RatingBar ratingBarOverall;
+    private ListView listViewMenu;
+    ArrayAdapter<String> adapter;
+    private Drink[] drinkNames;
+
+    private Button buttonAddDrink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coffee_shop);
+
+        textViewName = findViewById(R.id.textViewShopName);
+        textViewNoise = findViewById(R.id.textViewNoise);
+        textViewVariety = findViewById(R.id.textViewVariety);
+        textViewStudying = findViewById(R.id.textViewStudying);
+        textViewLight = findViewById(R.id.textViewLight);
+        textViewAccess = findViewById(R.id.textViewAccess);
+        textViewAtmosphere = findViewById(R.id.textViewAtmosphere);
+        textViewRating = findViewById(R.id.textViewRating);
+
+        ratingBarOverall = findViewById(R.id.ratingBarOverall);
+
+        buttonAddDrink = findViewById(R.id.buttonAddDrink);
+        buttonAddDrink.setOnClickListener(this);
+
+        listViewMenu = findViewById(R.id.listViewMenu);
+
+        chosenShopName = getIntent().getStringExtra("shop");
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                shop = dataSnapshot.getValue(CoffeeShop.class);
+
+                textViewName.setText("Shop: " + shop.name);
+                textViewNoise.setText("Noise Level: " +  Integer.toString(shop.noiseLevel));
+                textViewVariety.setText("Variety: " + Double.toString(shop.avgVariety));
+                textViewStudying.setText("Good For Studying: " + Double.toString(shop.avgStudying));
+                textViewLight.setText("Light Quality: " + Double.toString(shop.avgLight));
+                textViewAccess.setText("Accessability: " + Double.toString(shop.avgAccess));
+                textViewAtmosphere.setText("Atmoshpere: " + shop.atmosphere);
+                textViewRating.setText("Rating:");
+
+                ratingBarOverall.setIsIndicator(true);
+                ratingBarOverall.setRating((float) shop.avgOverall);
+
+                //drinkNames = new ArrayList<>();
+                drinkNames = shop.menu.values().toArray(new Drink[0]);
+
+                adapter = new ArrayAdapter(CoffeeShopActivity.this, R.layout.menurow, R.id.textViewDrinkName, drinkNames){
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView textViewDrinkName = view.findViewById(R.id.textViewDrinkName);
+                        RatingBar ratingBarDrinkRating = view.findViewById(R.id.ratingBarDrinkRating);
+
+                        textViewDrinkName.setText(drinkNames[position].name);
+                        ratingBarDrinkRating.setRating((float) drinkNames[position].avgRating);
+
+                        return view;
+                    }
+                };
+                listViewMenu.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+    @Override
+    public void onClick(View view){
+        if(view == buttonAddDrink) {
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
+            dialog.setTitle("Add Drink");
+
+            Context context = view.getContext();
+            LinearLayout layout = new LinearLayout(context);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            final EditText nameBox = new EditText(context);
+            nameBox.setHint("Name");
+            layout.addView(nameBox);
+
+            final TextView ratingText = new TextView(context);
+            ratingText.setText("Rating:");
+            layout.addView(ratingText);
+
+            final RatingBar ratingBox = new RatingBar(context);
+            ratingBox.setMax(5);
+            ratingBox.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(ratingBox);
+
+            final EditText classificationBox = new EditText(context);
+            classificationBox.setHint("Classification");
+            layout.addView(classificationBox);
+
+            final EditText priceBox = new EditText(context);
+            priceBox.setHint("Price");
+            layout.addView(priceBox);
+
+            final EditText strengthBox = new EditText(context);
+            strengthBox.setHint("Strength");
+            layout.addView(strengthBox);
+
+            final Button buttonAdd = new Button(context);
+            buttonAdd.setText("Add Drink");
+            layout.addView(buttonAdd);
+
+            dialog.setView(layout);
+            dialog.create();
+            dialog.show();
+            buttonAdd.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(view == buttonAdd){
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference myRef = database.getReference("Shops/" + chosenShopName + "/menu");
+
+                        Drink newDrink = new Drink(classificationBox.getText().toString(), nameBox.getText().toString(),
+                                Integer.parseInt(strengthBox.getText().toString()), ratingBox.getRating(),
+                                Double.parseDouble(priceBox.getText().toString()));
+                        myRef.child(newDrink.name).setValue(newDrink);
+                    }
+                }
+            });
+        }
+
     }
 }

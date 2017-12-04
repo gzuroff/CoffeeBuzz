@@ -25,6 +25,15 @@ public class Drink {
         this.price = price;
     }
 
+    public Drink(){};
+
+    public Drink(String classification, String name, int strength, double avgRating, double price) {
+        this.classification = classification;
+        this.name = name;
+        this.strength = strength;
+        this.avgRating = avgRating;
+        this.price = price;
+    }
 
     String classification, name;
 
@@ -32,7 +41,7 @@ public class Drink {
         this.strength = strength;
     }
 
-    int strength, avgRating;
-    double price;
+    int strength;
+    double price, avgRating;
     //Hashtable<String, ArrayList<DrinkReview>> Reviews;
 }

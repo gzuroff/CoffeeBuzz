@@ -192,7 +192,9 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
                         clickedShopName = shops.get(i).name;
-                        Toast.makeText(HomePage.this, clickedShopName, Toast.LENGTH_SHORT).show();
+                        Intent shopPage = new Intent(HomePage.this, CoffeeShopActivity.class);
+                        shopPage.putExtra("shop", shops.get(i).name);
+                        HomePage.this.startActivity(shopPage);
                     }});
 
             }
@@ -206,6 +208,6 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
 
         };
         myRef.addValueEventListener(postListener);
-}
+    }
 
 }
