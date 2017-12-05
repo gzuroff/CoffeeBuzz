@@ -1,15 +1,18 @@
 package com.gregoryzuroff.coffeebuzz;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 /**
  * Created by gregoryzuroff on 11/2/17.
  */
-
 public class CoffeeShop {
     int id;
     int noiseLevel;
@@ -21,16 +24,13 @@ public class CoffeeShop {
     String name;
     String atmosphere;
     double longitude, latitude;
-    double[] gps = new double[2];
 
     public void setLongitude(double longitude){
         this.longitude = longitude;
-        this.gps[0] = this.longitude;
     }
 
     public void setLatitude(double latitude){
         this.latitude = latitude;
-        this.gps[1] = this.latitude;
     }
 
     public void setId(int id) {
@@ -69,11 +69,6 @@ public class CoffeeShop {
         this.atmosphere = atmosphere;
     }
 
-
-    public void setMenu(Map<String, Drink> menu) {
-        this.menu = menu;
-    }
-
     public CoffeeShop(){}
 
     public CoffeeShop(int noiseLevel, double avgOverall, double avgVariety, double avgStudying, double avgLight, double avgAccess, String name, String atmosphere) {
@@ -85,9 +80,15 @@ public class CoffeeShop {
         this.avgAccess = avgAccess;
         this.name = name;
         this.atmosphere = atmosphere;
+        this.menu = new HashMap<>();
+        this.menu.put("coffee", new Drink("coffee", "coffee", 0, 0, 0));
     }
 
-    Map<String, Drink> menu;
+    public void setMenu(HashMap<String, Drink> menu) {
+        this.menu = menu;
+    }
+
+    HashMap<String, Drink> menu;
     //Hashtable<String, ArrayList<CoffeeShopReview>> reviews;
 
 

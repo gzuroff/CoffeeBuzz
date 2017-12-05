@@ -143,7 +143,8 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 public void onClick(View view) {
                     if(view == buttonAdd){
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        DatabaseReference myRef = database.getReference("Shops/" + nameBox.getText().toString());
+                        String name = nameBox.getText().toString();
+                        DatabaseReference myRef = database.getReference("Shops/" + name);
                         CoffeeShop newShop = new CoffeeShop(
                                 Integer.parseInt(noiseBox.getText().toString()),
                                 ratingBox.getRating(),
@@ -156,6 +157,7 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
 
                         );
                         myRef.setValue(newShop);
+                        fetchData(sortName, filters);
                     }
                 }
             });
@@ -237,6 +239,9 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 if (!filters1.isEmpty()) {
                     Drink[] drinkList;
                     for (int i = 0; i < shops.size(); i++){
+                        if(shops.get(i).menu == null){
+                            continue;
+                        }
                         drinkList = shops.get(i).menu.values().toArray(new Drink[0]);
                         for(int j = 0; j < drinkList.length; j++){
                             if( filters1.contains(drinkList[j].classification)){
@@ -310,7 +315,7 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
             }
 
         };
-        myRef.addValueEventListener(postListener);
+        myRef.addListenerForSingleValueEvent(postListener);
     }
 
 }
