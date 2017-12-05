@@ -24,6 +24,11 @@ public class CoffeeShop {
     String name;
     String atmosphere;
     double longitude, latitude;
+    Boolean hasDrinks;
+
+    public void setHasDrinks(Boolean hasDrinks){
+        this.hasDrinks = hasDrinks;
+    }
 
     public void setLongitude(double longitude){
         this.longitude = longitude;
@@ -80,8 +85,7 @@ public class CoffeeShop {
         this.avgAccess = avgAccess;
         this.name = name;
         this.atmosphere = atmosphere;
-        this.menu = new HashMap<>();
-        this.menu.put("coffee", new Drink("coffee", "coffee", 0, 0, 0));
+        this.hasDrinks = false;
     }
 
     public void setMenu(HashMap<String, Drink> menu) {

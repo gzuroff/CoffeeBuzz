@@ -73,49 +73,9 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
         listViewMenu = (ListView) findViewById(R.id.listViewMenu);
 
         chosenShopName = getIntent().getStringExtra("shop");
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                shop = dataSnapshot.getValue(CoffeeShop.class);
 
-                textViewName.setText("Shop: " + shop.name);
-                textViewNoise.setText("Noise Level: " +  Integer.toString(shop.noiseLevel));
-                textViewVariety.setText("Variety: " + Double.toString(shop.avgVariety));
-                textViewStudying.setText("Good For Studying: " + Double.toString(shop.avgStudying));
-                textViewLight.setText("Light Quality: " + Double.toString(shop.avgLight));
-                textViewAccess.setText("Accessability: " + Double.toString(shop.avgAccess));
-                textViewAtmosphere.setText("Atmoshpere: " + shop.atmosphere);
-                textViewRating.setText("Rating:");
+        fetchData();
 
-                ratingBarOverall.setIsIndicator(true);
-                ratingBarOverall.setRating((float) shop.avgOverall);
-
-                //drinkNames = new ArrayList<>();
-                drinkNames = shop.menu.values().toArray(new Drink[0]);
-
-                adapter = new ArrayAdapter(CoffeeShopActivity.this, R.layout.menurow, R.id.textViewDrinkName, drinkNames){
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        View view = super.getView(position, convertView, parent);
-                        TextView textViewDrinkName = view.findViewById(R.id.textViewDrinkName);
-                        RatingBar ratingBarDrinkRating = view.findViewById(R.id.ratingBarDrinkRating);
-
-                        textViewDrinkName.setText(drinkNames[position].name);
-                        ratingBarDrinkRating.setRating((float) drinkNames[position].avgRating);
-
-                        return view;
-                    }
-                };
-                listViewMenu.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
     @Override
     public void onClick(View view){
@@ -164,12 +124,14 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                 public void onClick(View view) {
                     if(view == buttonAdd){
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        DatabaseReference myRef = database.getReference("Shops/" + chosenShopName + "/menu");
+                        DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
 
                         Drink newDrink = new Drink(classificationBox.getText().toString(), nameBox.getText().toString(),
                                 Integer.parseInt(strengthBox.getText().toString()), ratingBox.getRating(),
                                 Double.parseDouble(priceBox.getText().toString()));
-                        myRef.child(newDrink.name).setValue(newDrink);
+                        myRef.child("menu").child(newDrink.name).setValue(newDrink);
+                        myRef.child("hasDrinks").setValue(true);
+                        fetchData();
                     }
                 }
             });
@@ -191,5 +153,57 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void fetchData(){
+        shop = new CoffeeShop();
+        listViewMenu.setAdapter(null);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                shop = dataSnapshot.getValue(CoffeeShop.class);
+
+                textViewName.setText("Shop: " + shop.name);
+                textViewNoise.setText("Noise Level: " +  Integer.toString(shop.noiseLevel));
+                textViewVariety.setText("Variety: " + Double.toString(shop.avgVariety));
+                textViewStudying.setText("Good For Studying: " + Double.toString(shop.avgStudying));
+                textViewLight.setText("Light Quality: " + Double.toString(shop.avgLight));
+                textViewAccess.setText("Accessability: " + Double.toString(shop.avgAccess));
+                textViewAtmosphere.setText("Atmoshpere: " + shop.atmosphere);
+                textViewRating.setText("Rating:");
+
+                ratingBarOverall.setIsIndicator(true);
+                ratingBarOverall.setRating((float) shop.avgOverall);
+                if (shop.hasDrinks) {
+                    //drinkNames = new ArrayList<>();
+                    drinkNames = shop.menu.values().toArray(new Drink[0]);
+
+                    adapter = new ArrayAdapter(CoffeeShopActivity.this, R.layout.menurow, R.id.textViewDrinkName, drinkNames) {
+                        public View getView(int position, View convertView, ViewGroup parent) {
+                            View view = super.getView(position, convertView, parent);
+                            TextView textViewDrinkName = view.findViewById(R.id.textViewDrinkName);
+                            RatingBar ratingBarDrinkRating = view.findViewById(R.id.ratingBarDrinkRating);
+
+                            textViewDrinkName.setText(drinkNames[position].name);
+                            ratingBarDrinkRating.setRating((float) drinkNames[position].avgRating);
+
+                            return view;
+                        }
+                    };
+                    listViewMenu.setAdapter(adapter);
+                }
+                else{
+                    listViewMenu.setAdapter(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
     }
 }
