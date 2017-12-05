@@ -1,11 +1,17 @@
 package com.gregoryzuroff.coffeebuzz;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,21 +56,21 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coffee_shop);
 
-        textViewName = findViewById(R.id.textViewShopName);
-        textViewNoise = findViewById(R.id.textViewNoise);
-        textViewVariety = findViewById(R.id.textViewVariety);
-        textViewStudying = findViewById(R.id.textViewStudying);
-        textViewLight = findViewById(R.id.textViewLight);
-        textViewAccess = findViewById(R.id.textViewAccess);
-        textViewAtmosphere = findViewById(R.id.textViewAtmosphere);
-        textViewRating = findViewById(R.id.textViewRating);
+        textViewName = (TextView) findViewById(R.id.textViewShopName);
+        textViewNoise = (TextView) findViewById(R.id.textViewNoise);
+        textViewVariety = (TextView) findViewById(R.id.textViewVariety);
+        textViewStudying = (TextView) findViewById(R.id.textViewStudying);
+        textViewLight = (TextView) findViewById(R.id.textViewLight);
+        textViewAccess = (TextView) findViewById(R.id.textViewAccess);
+        textViewAtmosphere = (TextView) findViewById(R.id.textViewAtmosphere);
+        textViewRating = (TextView) findViewById(R.id.textViewRating);
 
-        ratingBarOverall = findViewById(R.id.ratingBarOverall);
+        ratingBarOverall = (RatingBar) findViewById(R.id.ratingBarOverall);
 
-        buttonAddDrink = findViewById(R.id.buttonAddDrink);
+        buttonAddDrink = (Button) findViewById(R.id.buttonAddDrink);
         buttonAddDrink.setOnClickListener(this);
 
-        listViewMenu = findViewById(R.id.listViewMenu);
+        listViewMenu = (ListView) findViewById(R.id.listViewMenu);
 
         chosenShopName = getIntent().getStringExtra("shop");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -167,6 +174,22 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                 }
             });
         }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.goback, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.goToHomePage:
+                startActivity(new Intent(getApplicationContext(), HomePage.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

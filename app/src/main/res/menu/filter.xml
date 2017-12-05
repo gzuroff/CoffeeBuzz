@@ -10,4 +10,10 @@
     <item android:id="@+id/filterCappuccino"
         android:title="Cappuccino"
         />
+    <item android:id="@+id/filterOther"
+        android:title="Other"
+        />
+    <item android:id="@+id/filterClear"
+        android:title="Clear Filter"
+        />
 </menu>

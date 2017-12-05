@@ -6,31 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.gregoryzuroff.coffeebuzz.HomePage">
 
-    <EditText
-        android:id="@+id/locationInput"
-        android:layout_width="260dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/locationInput"
-        android:inputType="textPostalAddress"
-        app:layout_constraintHorizontal_bias="0.038"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <Button
-        android:id="@+id/signUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/signUpButtonString"
-        app:layout_constraintLeft_toRightOf="@+id/locationInput"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/filterMenu"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -38,9 +13,9 @@
         android:layout_height="wrap_content"
         android:text="@string/filterButtonString"
         app:layout_constraintBaseline_toBaselineOf="@+id/sortButton"
-        app:layout_constraintLeft_toLeftOf="@+id/locationInput"
         tools:layout_constraintBaseline_creator="1"
-        tools:layout_constraintLeft_creator="1" />
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_editor_absoluteX="5dp" />
 
     <Button
         android:id="@+id/sortButton"
@@ -49,9 +24,9 @@
         android:layout_height="wrap_content"
         android:text="@string/sortButtonString"
         app:layout_constraintLeft_toRightOf="@+id/filterMenu"
-        app:layout_constraintTop_toBottomOf="@+id/locationInput"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_constraintTop_creator="1"
+        tools:layout_editor_absoluteY="0dp" />
 
     <ListView
         android:id="@+id/coffeeList"
@@ -69,5 +44,15 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
+
+    <Button
+        android:id="@+id/buttonAddShop"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:text="Add Shop"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="0dp" />
 
 </android.support.constraint.ConstraintLayout>

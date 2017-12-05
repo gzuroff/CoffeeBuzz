@@ -74,6 +74,19 @@ public class CoffeeShop {
         this.menu = menu;
     }
 
+    public CoffeeShop(){}
+
+    public CoffeeShop(int noiseLevel, double avgOverall, double avgVariety, double avgStudying, double avgLight, double avgAccess, String name, String atmosphere) {
+        this.noiseLevel = noiseLevel;
+        this.avgOverall = avgOverall;
+        this.avgVariety = avgVariety;
+        this.avgStudying = avgStudying;
+        this.avgLight = avgLight;
+        this.avgAccess = avgAccess;
+        this.name = name;
+        this.atmosphere = atmosphere;
+    }
+
     Map<String, Drink> menu;
     //Hashtable<String, ArrayList<CoffeeShopReview>> reviews;
 

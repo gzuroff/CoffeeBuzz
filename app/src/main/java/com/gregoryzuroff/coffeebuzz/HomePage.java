@@ -1,10 +1,13 @@
 package com.gregoryzuroff.coffeebuzz;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.media.Rating;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RatingBar;
@@ -41,8 +45,10 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
     private ArrayAdapter<String> adapter;
     // Get all shops data in shops
     private ArrayList<CoffeeShop> shops = new ArrayList<>();
+    private ArrayList<CoffeeShop> shops1 = new ArrayList<>();
     private Button buttonSort;
     private Button buttonFilter;
+    private Button buttonAddShop;
     private Boolean sortName = true;
 
     private ArrayList<String> filters;
@@ -57,11 +63,13 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
         coffeeList = findViewById(R.id.coffeeList);
         buttonSort = findViewById(R.id.sortButton);
         buttonFilter = findViewById(R.id.filterMenu);
+        buttonAddShop = findViewById(R.id.buttonAddShop);
 
         filters = new ArrayList<>();
 
         buttonSort.setOnClickListener(this);
         buttonFilter.setOnClickListener(this);
+        buttonAddShop.setOnClickListener(this);
         fetchData(sortName, filters);
     }
 
@@ -72,6 +80,85 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
         }
         else if(view == buttonFilter){
             showPopupMenu(view);
+        }
+        else if(view == buttonAddShop){
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
+            dialog.setTitle("Add Coffee Shop");
+
+            Context context = view.getContext();
+            LinearLayout layout = new LinearLayout(context);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            final EditText nameBox = new EditText(context);
+            nameBox.setHint("Name of Coffee Shop");
+            layout.addView(nameBox);
+
+            final TextView ratingText = new TextView(context);
+            ratingText.setText("Rating:");
+            layout.addView(ratingText);
+
+            final RatingBar ratingBox = new RatingBar(context);
+            ratingBox.setMax(5);
+            ratingBox.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(ratingBox);
+
+            final EditText accessBox = new EditText(context);
+            accessBox.setHint("Accessibility");
+            accessBox.setInputType(InputType.TYPE_CLASS_NUMBER);
+            layout.addView(accessBox);
+
+            final EditText atmosphereBox = new EditText(context);
+            atmosphereBox.setHint("Atmosphere");
+            layout.addView(atmosphereBox);
+
+            final EditText lightBox = new EditText(context);
+            lightBox.setHint("Light Quality");
+            lightBox.setInputType(InputType.TYPE_CLASS_NUMBER);
+            layout.addView(lightBox);
+
+            final EditText studyBox = new EditText(context);
+            studyBox.setHint("Ability To Study");
+            studyBox.setInputType(InputType.TYPE_CLASS_NUMBER);
+            layout.addView(studyBox);
+
+            final EditText varietyBox = new EditText(context);
+            varietyBox.setHint("Variety");
+            varietyBox.setInputType(InputType.TYPE_CLASS_NUMBER);
+            layout.addView(varietyBox);
+
+            final EditText noiseBox = new EditText(context);
+            noiseBox.setHint("Noise Level");
+            noiseBox.setInputType(InputType.TYPE_CLASS_NUMBER);
+            layout.addView(noiseBox);
+
+            final Button buttonAdd = new Button(context);
+            buttonAdd.setText("Add Coffee Shop");
+            layout.addView(buttonAdd);
+
+            dialog.setView(layout);
+            dialog.create();
+            dialog.show();
+            buttonAdd.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(view == buttonAdd){
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference myRef = database.getReference("Shops/" + nameBox.getText().toString());
+                        CoffeeShop newShop = new CoffeeShop(
+                                Integer.parseInt(noiseBox.getText().toString()),
+                                ratingBox.getRating(),
+                                Double.parseDouble(varietyBox.getText().toString()),
+                                Double.parseDouble(studyBox.getText().toString()),
+                                Double.parseDouble(lightBox.getText().toString()),
+                                Double.parseDouble(accessBox.getText().toString()),
+                                nameBox.getText().toString(),
+                                atmosphereBox.getText().toString()
+
+                        );
+                        myRef.setValue(newShop);
+                    }
+                }
+            });
         }
     }
 
@@ -103,12 +190,24 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 return true;
             case R.id.filterCoffee:
                 filters.add("coffee");
+                fetchData(sortName, filters);
                 return true;
             case R.id.filterEspresso:
                 filters.add("espresso");
+                fetchData(sortName, filters);
                 return true;
             case R.id.filterCappuccino:
                 filters.add("cappuccino");
+                fetchData(sortName, filters);
+                return true;
+            case R.id.filterOther:
+                filters.add("other");
+                fetchData(sortName, filters);
+                return true;
+            case R.id.filterClear:
+                filters.clear();
+                filters = new ArrayList<>();
+                fetchData(sortName, filters);
                 return true;
             default:
                 return false;
@@ -116,8 +215,10 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
     }
     public void fetchData(Boolean sorted, final ArrayList<String> filters1){
         shops.clear();
+        shops1.clear();
         coffeeList.setAdapter(null);
         shops = new ArrayList<>();
+        shops1 = new ArrayList<>();
         sortName = sorted;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Shops");
@@ -131,7 +232,6 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     CoffeeShop shop = postSnapshot.getValue(CoffeeShop.class);
                     shops.add(shop);
-                    Toast.makeText(HomePage.this, shop.menu.get("coffee").classification, Toast.LENGTH_SHORT).show();
                 }
                 final ArrayList<Integer> indexes = new ArrayList<>();
                 if (!filters1.isEmpty()) {
@@ -140,7 +240,10 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                         drinkList = shops.get(i).menu.values().toArray(new Drink[0]);
                         for(int j = 0; j < drinkList.length; j++){
                             if( filters1.contains(drinkList[j].classification)){
-                                indexes.add(i);
+                                if(!shops1.contains(shops.get(i))) {
+                                    indexes.add(i);
+                                    shops1.add(shops.get(i));
+                                }
                                 break;
                             }
                         }
@@ -149,6 +252,7 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 else{
                     for (int i = 0; i < shops.size(); i++){
                         indexes.add(i);
+                        shops1.add(shops.get(i));
                     }
                 }
                 if(indexes.size() < 1){
@@ -159,7 +263,7 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 }
 
                 if(sortName){
-                    Collections.sort(shops, new Comparator<CoffeeShop>() {
+                    Collections.sort(shops1, new Comparator<CoffeeShop>() {
                         @Override
                         public int compare(CoffeeShop coffeeShop, CoffeeShop t1) {
                             return coffeeShop.name.compareToIgnoreCase(t1.name);
@@ -167,23 +271,22 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                     });
                 }
                 else{
-                    Collections.sort(shops, new Comparator<CoffeeShop>() {
+                    Collections.sort(shops1, new Comparator<CoffeeShop>() {
                         @Override
                         public int compare(CoffeeShop coffeeShop, CoffeeShop t1) {
                             return (int) (t1.avgOverall - coffeeShop.avgOverall);
                         }
                     });
                 }
-                adapter = new ArrayAdapter(HomePage.this, R.layout.simplerow, R.id.textViewShopName, shops){
+                adapter = new ArrayAdapter(HomePage.this, R.layout.simplerow, R.id.textViewShopName, shops1){
                     public View getView(int position, View convertView, ViewGroup parent) {
                         View view = super.getView(position, convertView, parent);
                         TextView textViewShopName = view.findViewById(R.id.textViewShopName);
                         RatingBar ratingBarShopRating = view.findViewById(R.id.ratingBarShopRating);
-                        if(indexes.contains(position)) {
-                            textViewShopName.setText(shops.get(position).name);
-                            ratingBarShopRating.setRating((float) shops.get(position).avgOverall);
-                            ratingBarShopRating.setIsIndicator(true);
-                        }
+                        textViewShopName.setText(shops1.get(position).name);
+                        ratingBarShopRating.setRating((float) shops1.get(position).avgOverall);
+                        ratingBarShopRating.setIsIndicator(true);
+
                         return view;
                     }
                 };
@@ -191,9 +294,9 @@ public class HomePage extends Activity implements Button.OnClickListener, PopupM
                 coffeeList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
-                        clickedShopName = shops.get(i).name;
+                        clickedShopName = shops1.get(i).name;
                         Intent shopPage = new Intent(HomePage.this, CoffeeShopActivity.class);
-                        shopPage.putExtra("shop", shops.get(i).name);
+                        shopPage.putExtra("shop", shops1.get(i).name);
                         HomePage.this.startActivity(shopPage);
                     }});
 
