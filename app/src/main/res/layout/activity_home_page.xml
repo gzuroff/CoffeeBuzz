@@ -28,6 +28,7 @@
         tools:layout_constraintTop_creator="1"
         tools:layout_editor_absoluteY="0dp" />
 
+    <!--gets filled automatically in app-->
     <ListView
         android:id="@+id/coffeeList"
         android:layout_width="0dp"

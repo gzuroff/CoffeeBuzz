@@ -45,6 +45,7 @@ public class LoginSignup extends Activity  implements Button.OnClickListener {
                 // ...
             }
         };
+        //don't need to be casted as respective type either
         buttonLogIn = (Button) findViewById(R.id.buttonLogIn);
         buttonCreate = (Button) findViewById(R.id.buttonCreate);
         editTextUsername = (EditText) findViewById(R.id.editTextUsername);
@@ -71,10 +72,6 @@ public class LoginSignup extends Activity  implements Button.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginSignup.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
@@ -90,10 +87,6 @@ public class LoginSignup extends Activity  implements Button.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(LoginSignup.this, "Authentication Failed",

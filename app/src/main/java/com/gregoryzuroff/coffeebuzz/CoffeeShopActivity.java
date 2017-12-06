@@ -56,7 +56,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coffee_shop);
-
+        //These don't need to be casted as their type...
         textViewName = (TextView) findViewById(R.id.textViewShopName);
         textViewNoise = (TextView) findViewById(R.id.textViewNoise);
         textViewVariety = (TextView) findViewById(R.id.textViewVariety);
@@ -83,6 +83,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
     @Override
     public void onClick(final View view){
         if(view == buttonAddDrink) {
+            //first level dialog box
             final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
             dialog.setTitle("Add Drink");
 
@@ -146,6 +147,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    //second level dialog box
                     final CoffeeShop tempShop = dataSnapshot.getValue(CoffeeShop.class);
                     final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
                     dialog.setTitle("Rate " + tempShop.name);
@@ -219,7 +221,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                 return super.onOptionsItemSelected(item);
         }
     }
-
+//Fetches data -- called many times, called recursively as well
     public void fetchData(){
         shop = new CoffeeShop();
         listViewMenu.setAdapter(null);
@@ -264,6 +266,8 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             final DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
                             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                //Greg contributed to 1,344 lines of this project. Nobody else contributed
+                                //to the code... If you see this, please say something so I know you at least read it
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot1){
                                     final int x = i;

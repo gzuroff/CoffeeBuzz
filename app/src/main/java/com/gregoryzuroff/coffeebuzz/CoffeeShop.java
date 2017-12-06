@@ -8,40 +8,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 
-/**
- * Created by gregoryzuroff on 11/2/17.
- */
+
 public class CoffeeShop {
-    int id;
-    int noiseLevel;
-    double avgOverall;
-    double avgVariety;
-    double avgStudying;
-    double avgLight;
-    double avgAccess;
-    String name;
-    String atmosphere;
-    double longitude, latitude;
+    //id isnt really necessary until we start adding multiple of the same shops
+    //i.e. the multiple espresso royales on campus...
+    int id, noiseLevel, votes;
+    double avgOverall, avgVariety, avgStudying, avgLight, avgAccess, longitude, latitude;
+    String name, atmosphere;
     Boolean hasDrinks;
-    int votes;
 
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
+    public void setVotes(int votes) { this.votes = votes; }
 
-    public void setHasDrinks(Boolean hasDrinks){
-        this.hasDrinks = hasDrinks;
-    }
+    public void setHasDrinks(Boolean hasDrinks){ this.hasDrinks = hasDrinks; }
 
-    public void setLongitude(double longitude){
-        this.longitude = longitude;
-    }
+    public void setLongitude(double longitude){ this.longitude = longitude; }
 
-    public void setLatitude(double latitude){
-        this.latitude = latitude;
-    }
+    public void setLatitude(double latitude){ this.latitude = latitude; }
 
     public void setId(int id) {
         this.id = id;
@@ -94,10 +77,10 @@ public class CoffeeShop {
         this.votes = 1;
     }
 
-    public void setMenu(HashMap<String, Drink> menu) {
-        this.menu = menu;
-    }
+    public void setMenu(HashMap<String, Drink> menu) { this.menu = menu; }
 
+    //Made menu a hashmap instead of a map, thinking it would fix an error
+    //error was unrelated, but don't want to risk changing it back...
     HashMap<String, Drink> menu;
     //Hashtable<String, ArrayList<CoffeeShopReview>> reviews;
 
