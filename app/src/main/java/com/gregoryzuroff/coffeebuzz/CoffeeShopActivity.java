@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,7 +50,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
     ArrayAdapter<String> adapter;
     private Drink[] drinkNames;
 
-    private Button buttonAddDrink;
+    private Button buttonAddDrink, buttonAddShopRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,8 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
 
         buttonAddDrink = (Button) findViewById(R.id.buttonAddDrink);
         buttonAddDrink.setOnClickListener(this);
+        buttonAddShopRating = findViewById(R.id.buttonAddShopRating);
+        buttonAddShopRating.setOnClickListener(this);
 
         listViewMenu = (ListView) findViewById(R.id.listViewMenu);
 
@@ -78,7 +81,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
 
     }
     @Override
-    public void onClick(View view){
+    public void onClick(final View view){
         if(view == buttonAddDrink) {
             final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
             dialog.setTitle("Add Drink");
@@ -135,6 +138,68 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                     }
                 }
             });
+        }
+        else if(view == buttonAddShopRating){
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final CoffeeShop tempShop = dataSnapshot.getValue(CoffeeShop.class);
+                    final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
+                    dialog.setTitle("Rate " + tempShop.name);
+
+                    Context context = view.getContext();
+                    LinearLayout layout = new LinearLayout(context);
+                    layout.setOrientation(LinearLayout.VERTICAL);
+
+                    final TextView ratingText = new TextView(context);
+                    ratingText.setText("Rating:");
+                    layout.addView(ratingText);
+
+                    final RatingBar ratingBox = new RatingBar(context);
+                    ratingBox.setMax(5);
+                    ratingBox.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    layout.addView(ratingBox);
+
+                    final Button buttonDone = new Button(context);
+                    buttonDone.setText("Add Rating!");
+                    layout.addView(buttonDone);
+
+                    dialog.setView(layout);
+                    dialog.create();
+                    dialog.show();
+                    buttonDone.setOnClickListener(new Button.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(view == buttonDone){
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                DatabaseReference newRef = database.getReference("Shops/" + chosenShopName);
+                                int count = tempShop.votes;
+                                float rating = ratingBox.getRating();
+
+                                float newRating = (float) tempShop.avgOverall * count + rating;
+                                count++;
+                                newRating /= (float) count;
+
+                                myRef.child("avgOverall").setValue(newRating);
+                                myRef.child("votes").setValue(count);
+                                fetchData();
+                            }
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+
+
         }
     }
 
@@ -193,6 +258,117 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                         }
                     };
                     listViewMenu.setAdapter(adapter);
+                    listViewMenu.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, final View view, final int i, long l){
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            final DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
+                            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot1){
+                                    final int x = i;
+
+                                    final String clickedDrinkName;
+                                    clickedDrinkName =drinkNames[x].name;
+                                    final Drink newDrink = dataSnapshot1.child("menu").child(clickedDrinkName).getValue(Drink.class);
+
+                                    final AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
+                                    dialog.setTitle("Rate "+ clickedDrinkName);
+
+                                    Context context = view.getContext();
+                                    LinearLayout layout = new LinearLayout(context);
+                                    layout.setOrientation(LinearLayout.VERTICAL);
+
+
+                                    final TextView classBox = new TextView(context);
+                                    classBox.setText("Classification: "+ newDrink.classification);
+                                    layout.addView(classBox);
+
+                                    final TextView ratingText = new TextView(context);
+                                    ratingText.setText("Rating: ");
+                                    layout.addView(ratingText);
+
+                                    final RatingBar ratingBox = new RatingBar(context);
+                                    ratingBox.setMax(5);
+                                    ratingBox.setIsIndicator(true);
+                                    ratingBox.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+                                    ratingBox.setRating((float)drinkNames[i].avgRating);
+                                    layout.addView(ratingBox);
+
+                                    final TextView priceBox = new TextView(context);
+                                    priceBox.setText("Price: "+ newDrink.price);
+                                    layout.addView(priceBox);
+
+                                    final TextView strengthBox = new TextView(context);
+                                    strengthBox.setText("Strength: "+ newDrink.strength);
+                                    layout.addView(strengthBox);
+
+
+                                    final Button buttonAddDrinkRating = new Button(context);
+                                    buttonAddDrinkRating.setText("Add Rating!");
+                                    layout.addView(buttonAddDrinkRating);
+
+                                    dialog.setView(layout);
+                                    dialog.create();
+                                    dialog.show();
+                                    buttonAddDrinkRating.setOnClickListener(new Button.OnClickListener(){
+                                        @Override
+                                        public void onClick (View view){
+                                        if (view == buttonAddDrinkRating) {
+                                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                            final DatabaseReference newRef = database.getReference("Shops/" + chosenShopName + "/menu/" + clickedDrinkName);
+
+                                            final AlertDialog.Builder dialog1 = new AlertDialog.Builder(view.getContext());
+                                            dialog.setTitle("Rate " + clickedDrinkName + "!");
+
+                                            Context context1 = view.getContext();
+                                            LinearLayout layout1 = new LinearLayout(context1);
+                                            layout1.setOrientation(LinearLayout.VERTICAL);
+
+                                            final TextView ratingText1 = new TextView(context1);
+                                            ratingText1.setText("Rating:");
+                                            layout1.addView(ratingText1);
+
+                                            final RatingBar ratingBox1 = new RatingBar(context1);
+                                            ratingBox1.setMax(5);
+                                            ratingBox1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                            layout1.addView(ratingBox1);
+
+                                            final Button buttonDone1 = new Button(context1);
+                                            buttonDone1.setText("Add Rating!");
+                                            layout1.addView(buttonDone1);
+
+                                            dialog1.setView(layout1);
+                                            dialog1.create();
+                                            dialog1.show();
+
+                                            buttonDone1.setOnClickListener(new Button.OnClickListener(){
+                                                @Override
+                                                public void onClick(View view) {
+                                                    int count = newDrink.votes;
+                                                    float rating = ratingBox1.getRating();
+
+                                                    float newRating = (float) newDrink.avgRating * count + rating;
+                                                    count++;
+                                                    newRating /= (float) count;
+
+                                                    newRef.child("avgRating").setValue(newRating);
+                                                    newRef.child("votes").setValue(count);
+                                                    fetchData();
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                    });
+                            }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }});
+                            }
+                        });
                 }
                 else{
                     listViewMenu.setAdapter(null);
