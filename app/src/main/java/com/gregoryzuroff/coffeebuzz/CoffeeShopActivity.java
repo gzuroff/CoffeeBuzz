@@ -236,7 +236,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                 textViewNoise.setText("Noise Level: " +  Integer.toString(shop.noiseLevel));
                 textViewVariety.setText("Variety: " + Double.toString(shop.avgVariety));
                 textViewStudying.setText("Good For Studying: " + Double.toString(shop.avgStudying));
-                textViewLight.setText("Light Quality: " + Double.toString(shop.avgLight));
+                textViewLight.setText("Lighting  Quality: " + Double.toString(shop.avgLight));
                 textViewAccess.setText("Accessability: " + Double.toString(shop.avgAccess));
                 textViewAtmosphere.setText("Atmoshpere: " + shop.atmosphere);
                 textViewRating.setText("Rating:");

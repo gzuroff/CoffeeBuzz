@@ -75,6 +75,9 @@ public class LoginSignup extends Activity  implements Button.OnClickListener {
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginSignup.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginSignup.this, "Account created! Please sign in.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
