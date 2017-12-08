@@ -130,7 +130,7 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
                         DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
 
-                        Drink newDrink = new Drink(classificationBox.getText().toString(), nameBox.getText().toString(),
+                        Drink newDrink = new Drink(classificationBox.getText().toString().toLowerCase(), nameBox.getText().toString(),
                                 Integer.parseInt(strengthBox.getText().toString()), ratingBox.getRating(),
                                 Double.parseDouble(priceBox.getText().toString()));
                         myRef.child("menu").child(newDrink.name).setValue(newDrink);
@@ -266,8 +266,6 @@ public class CoffeeShopActivity extends Activity implements Button.OnClickListen
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             final DatabaseReference myRef = database.getReference("Shops/" + chosenShopName);
                             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                //Greg contributed to 1,344 lines of this project. Nobody else contributed
-                                //to the code... If you see this, please say something so I know you at least read it
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot1){
                                     final int x = i;
